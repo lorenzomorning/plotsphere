@@ -1,0 +1,81 @@
+---
+title: "Basic management of 3D plot"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{plot3D}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+options(rmarkdown.html_vignette.check_title = FALSE)
+```
+
+```{r setup, echo=FALSE, include=FALSE, results="asis"}
+library(rgl)
+setupKnitr(autoprint = TRUE)
+```
+
+The package `rgl` is a 3D visualization system based on OpenGL. It provides a medium to high level interface for use in R, currently modelled on classic R graphics, with extensions to allow for interaction.
+
+This section is a short introduction on useful information about `rgl` regarding this package `plotsphere`. For more detailed description of `rgl` see the github vignettes bymain developer Duncan Murdoch: https://dmurdoch.github.io/rgl/dev/
+
+While plot 3D is mainly used in this packages to produce 3D scatterplots we will rather plot graphical elements as spheres, points, arcs and triangles using `xzy.coords` into the 3D space.
+
+## Graphical Elements
+
+There are many and specific graphical elements available in the `rgl` package. However, we will limit those to most necessary we need
+
+Function        | Description         | Type of element  | Geospatial geometry
+----------------| --------------------|------------------|-------------------
+`points3d`:     | adds points         | primitive        | point
+`triangles3d`:  | adds triangles      | primitive        | polygon
+`spheres3d`:    | adds spheres        | constructed      | The Earth
+`arcs3d`:       | adds spherical arcs | constructed      | line
+
+## Operators on the 3D plots
+
+As we only deal with one active 3D plot, these functions are the basic operators to manage it:
+
+* `open3d` to open a new 3D plot window (prints id number)
+* `cur3d` get id of currently opened 3D plot (prints id number)
+* `close3d` to close current 3D plot window
+* `set3d` set another 3D plot window as the current one 
+* `ids3d` get the objects on the current 3D plot window
+
+```{r sphere}
+# open device for 3D plotting
+open3d()
+spheres3d(x=0, y=0, z=0, radius = 6378137, color = "white")
+```
+
+```{r basic2}
+cur3d() # prints index of currently open 3D plots
+open3d() # closes previous one and opens a new 3D plot (print index of opened plot)
+cur3d() # prints index of currently open 3D plots
+close3d() # closes the current 3D plot
+```
+
+Additionally there are some extensive functions:
+
+* `scene3d`: Saves the current plot into a variable
+* `rglwidget`: For embedding graphical displays in HTML documents 
+
+## Our basic Earth
+
+Within adding graphical elements, general arguments can be used to control the material (https://dmurdoch.github.io/rgl/dev/articles/rgl.html#materials-1).
+Addtionally, advanced lightning can be set by the `light3d` function
+
+To model our basic Earth where all the geospatial data will be plotted on, we use a blue sphere. 
+
+```{r lightning}
+# apply different lights on the current plot
+open3d()
+spheres3d(x=0, y=0, z=0, radius = 6378137, color = "royalblue3", specular = "royalblue3", shininess = 25, alpha = 0.7)
+````
+
+Additionally, we want to add some latitudes and longitudes for orientation. Therefore, every 30 ° will be added to the sphere. 

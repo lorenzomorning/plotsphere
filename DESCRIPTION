@@ -19,3 +19,7 @@ RoxygenNote: 7.1.1
 Imports: 
     rgl,
     sf
+Suggests: 
+    rmarkdown,
+    knitr
+VignetteBuilder: knitr

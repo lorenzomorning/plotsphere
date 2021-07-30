@@ -1,0 +1,78 @@
+---
+title: "Use rgl 3D plots for geospatial data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{plot3Dspatial}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+options(rmarkdown.html_vignette.check_title = FALSE)
+```
+
+```{r setup, echo=FALSE, include=FALSE, results="asis"}
+library(rgl)
+library(sf)
+setupKnitr(autoprint = TRUE)
+```
+
+The functionalities of the package `rgl` (desribed in the previous vignette) are exploited to plot geospatial data sets that have ellipsoidal coordinates on an interactive sphere. As the package `sf` switches switches from the 1.0 version on to default calculations on a sphere, visualizations should be also plotted rather on a sphere than on a flat projection. 
+
+## Settings of 3D plots in `rgl`
+
+3D plots in the package `rgl` uses an euclidean three dimensional space with x, y, z axis, and therefore simulates a cartesian geocentric coordinate system. 
+
+## 1. The Earth is a sphere in 3D plots
+
+To understand how we model the Earth in our 3D plot with `rgl` we take a look at the fitting geocentric coordinate system `"+proj=geocent"`
+
+```{r geocent}
+st_crs("+proj=geocent")
+```
+In the description WKT of the geocentric projection we can see that it uses the `WGS84` ellipsoid with a radius of 6378137 m. Additionally the assumption is that this ellipsoid is centered at `POINT(0 0 0)` in the cartesian 3D space. Using this information the Earth is modelled in a sphere as the following: 
+
+```{r sphere}
+# open device for 3D plotting
+open3d()
+spheres3d(x=0, y=0, z=0, radius = 6378137, color = "white")
+```
+
+## 2. Coordinates as point in 3D plots
+
+Therefore ellipsoidal coordinates have to be projected to the cartesian geocentric coordinate system 
+
+````{r wgs84}
+# create an ellipsoidal point with lon 60° North and lat 47° East in WGS84
+(point_ne <- st_as_sfc("POINT(60 47)", crs = 4326)) 
+# create a second ellipsoidal point with lon -130° and lat -50° in WGS84
+(point_sw <- st_as_sfc("POINT(-130 -50)", crs = 4326))
+```
+
+As the Earth radius is implied in `WGS84` geographical projections the original points only need two angles to be referenced `(lon lat)`.
+
+```{r geocentric}
+# project both points to geocentric coordinate system
+(point_ne_geoc <- st_transform(point_ne, "+proj=geocent"))
+(point_sw_geoc <- st_transform(point_sw, "+proj=geocent"))
+```
+
+After projecting it into `+proj=geocent` the point now have three dimensions for its reference `(x y z)`. 
+For more information about the conversions check the chapter "2.2 Ellipsoidal Coordinates" in "Spatial Data Science" by Edzer Pebesma and Roger Bivand:
+https://keen-swartz-3146c4.netlify.app/cs.html#ellipsoidal-coordinates 
+
+```{r spherical point}
+# add the points to the 3D plot
+open3d()
+spheres3d(x=0, y=0, z=0, radius = 6378137, color = "white")
+# add point_ne_geoc
+points3d(x = st_coordinates(point_ne_geoc)[1,'X'], y = st_coordinates(point_ne_geoc)[1,'Y'], z = st_coordinates(point_ne_geoc)[1,'Z'])
+# add point_sw_geoc
+points3d(x = st_coordinates(point_sw_geoc)[1,'X'], y = st_coordinates(point_sw_geoc)[1,'Y'], z = st_coordinates(point_sw_geoc)[1,'Z'])
+```
+
+This is the underlying magic behind all conversions form ellipsoidal to geocentric coordinates. This basic procedure is done in all function of geometric conversion and plottings, as points are the the spatial primitives of all spatial geometries (including lines, polygons)
