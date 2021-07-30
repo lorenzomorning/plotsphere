@@ -1,0 +1,75 @@
+---
+title: "Purpose of package plotsphere"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{use_plotsphere}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>")
+options(rmarkdown.html_vignette.check_title = FALSE)
+```
+
+```{r setup, echo=FALSE, include=FALSE, results="asis"}
+library(plotsphere)
+library(rgl)
+library(sf)
+library(lwgeom)
+setupKnitr(autoprint = TRUE)
+```
+
+The main use of plotsphere so far is the comparison between spatial geometries that are spherical and spatial geometries that emerge from two-dimensional referecen systems. 
+The simple feature package `sf` is now capable of performing spatial operations of geographical/ellipsoidal coordinates (lon lat on WGS 84 for example) on a sphere, rather than most GISystems that handle geographical/ellipsoidal coordinates on a flat 2D space. The differences are huge and can be visualized very easy now using this package `plotsphere`
+
+## Berlin 2 Tokyo
+
+To demonstrate simple but huge differences in spatial lines, we define a line going from Berlin `(13.378936, 52.516658)` to Tokio `(139.753358, 35.681306)` on `WGS84 EPSG:4326`. 
+
+```{r line}
+berlin2tokyo <- st_linestring(rbind(c(13.378936, 52.516658), c(139.753358, 35.681306))) %>% st_sfc(crs = 4326)
+```
+
+To show where the lines really go we will now segmentize it on a shpere with `sf_use_s2 = TRUE` and simulate a traditional GIS by transforming the line to equirectangular projection which maps longitude and latitude linearly to the x and y axis and segmentize it with `sf_use_s2 = FALSE`
+
+```{r segmentize}
+# check is sf uses calculations on a sphere
+sf_use_s2()
+if (sf_use_s2()==FALSE) {
+  sf_use_s2(TRUE)
+}
+berlin2tokyo_s2_seg <- st_segmentize(berlin2tokyo, 1000000)
+
+# transform the original line to Web Mercator EPSG:3857
+berlin2tokyo_eqc <- st_transform(berlin2tokyo, "+proj=eqc")
+sf_use_s2(FALSE)
+berlin2tokyo_r2_seg <- st_segmentize(berlin2tokyo_eqc, 1000000)
+
+# plot both lines on a 2D plot
+plot(st_transform(berlin2tokyo_s2_seg, "+proj=eqc"))
+plot(berlin2tokyo_r2_seg, add=TRUE)
+```
+
+Looking at the 2D plot we clearly think that the straight line here is shorter.
+But now we can also visualize it on a sphere
+```{r sphere, echo=FALSE}
+ps_globe(alpha=0.4)
+ps_lines(berlin2tokyo_s2_seg)
+ps_lines(berlin2tokyo_r2_seg)
+# capture the current rgl window in a variable and include it as widget in rmarkdown
+x <- scene3d()
+rglwidget(x)
+```
+Here we already get the impression that the line more south (the straight line in 2D) is not shorter than the great cricle line on the sphere which passes by closer to the poles.
+
+This gets even more evident looking at the length of both lines
+```{r length}
+sf_use_s2(TRUE)
+st_length(berlin2tokyo_s2_seg)
+          
+sf_use_s2(FALSE)
+st_length(berlin2tokyo_r2_seg)
+```

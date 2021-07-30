@@ -18,6 +18,7 @@ options(rmarkdown.html_vignette.check_title = FALSE)
 ```{r setup, echo=FALSE, include=FALSE, results="asis"}
 library(rgl)
 library(sf)
+library(plotsphere)
 setupKnitr(autoprint = TRUE)
 ```
 
@@ -39,7 +40,7 @@ In the description WKT of the geocentric projection we can see that it uses the 
 ```{r sphere}
 # open device for 3D plotting
 open3d()
-spheres3d(x=0, y=0, z=0, radius = 6378137, color = "white")
+ps_globe()
 ```
 
 ## 2. Coordinates as point in 3D plots
@@ -68,7 +69,7 @@ https://keen-swartz-3146c4.netlify.app/cs.html#ellipsoidal-coordinates
 ```{r spherical point}
 # add the points to the 3D plot
 open3d()
-spheres3d(x=0, y=0, z=0, radius = 6378137, color = "white")
+ps_globe()
 # add point_ne_geoc
 points3d(x = st_coordinates(point_ne_geoc)[1,'X'], y = st_coordinates(point_ne_geoc)[1,'Y'], z = st_coordinates(point_ne_geoc)[1,'Z'])
 # add point_sw_geoc
