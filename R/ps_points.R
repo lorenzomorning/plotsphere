@@ -17,6 +17,9 @@
 #'ps_globe()
 #'ps_points(random_points, color='red', alpha=0.8)
 ps_points <- function(sf_points, color="black", alpha=1, ...) {
+  if(all(sf::st_geometry_type(sf_points)=='POINT' | sf::st_geometry_type(sf_points)=='MULTIPOINT') == FALSE) {
+    stop("Input sf geometries are not all POINTs or MULTIPOINTs")
+  }
   if (all(sf::st_is_valid(sf_points)) == FALSE) {
     sf_points <- sf::st_make_valid(sf_points)
   }
@@ -24,4 +27,4 @@ ps_points <- function(sf_points, color="black", alpha=1, ...) {
   sf_points <- sf::st_transform(sf_points, "+proj=geocent")
   sf_points <- sf::st_coordinates(sf_points)
   rgl::points3d(x=sf_points[,'X'], y=sf_points[,'Y'], z=sf_points[,'Z'], color=color, alpha=alpha, ...)
-  }
+}

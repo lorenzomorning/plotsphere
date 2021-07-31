@@ -45,7 +45,7 @@ ps_globe <- function(show_poles=TRUE, alpha=1, ...) {
       }
     }
     indices = 1:(length(vertices)/3)
-    rgl::shade3d(rgl::qmesh3d(vertices, indices, homogeneous=F), color = "#86a0dd", specular = "#1b618c", shininess = 75, alpha = alpha, ...)
+    rgl::shade3d(rgl::qmesh3d(vertices, indices, homogeneous=F), color = "#86a0dd", diffuse = "black", specular = "black", shininess = 75, alpha = alpha, ...)
   }
   if (show_poles==TRUE) {
     # create north and south pole points for orientation

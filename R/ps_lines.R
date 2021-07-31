@@ -17,6 +17,9 @@
 #'ps_globe()
 #'ps_lines(random_line, color = 'green')
 ps_lines <- function(sf_lines, color="black", alpha = 1, ...) {
+  if(all(sf::st_geometry_type(sf_lines)=='LINESTRING' | sf::st_geometry_type(sf_lines)=='MULTILINESTRING') == FALSE) {
+    stop("Input sf geometries are not all LINESTRINGs or MULTILINESTRINGs")
+  }
   if (all(sf::st_is_valid(sf_lines)) == FALSE) {
     sf_lines <- sf::st_make_valid(sf_lines)
   }
