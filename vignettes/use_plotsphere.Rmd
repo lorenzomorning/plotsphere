@@ -1,5 +1,7 @@
 ---
 title: "Purpose of package plotsphere"
+author: "Lorenz Beck"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{use_plotsphere}
@@ -9,12 +11,13 @@ vignette: >
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
+  results = "asis",
   collapse = TRUE,
   comment = "#>")
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
-```{r setup, echo=FALSE, include=FALSE, results="asis"}
+```{r setup, echo=FALSE, include=FALSE}
 library(plotsphere)
 library(rgl)
 library(sf)
@@ -45,7 +48,6 @@ berlin2tokyo_s2_seg <- st_segmentize(berlin2tokyo, 1000000)
 
 # transform the original line to Web Mercator EPSG:3857
 berlin2tokyo_eqc <- st_transform(berlin2tokyo, "+proj=eqc")
-sf_use_s2(FALSE)
 berlin2tokyo_r2_seg <- st_segmentize(berlin2tokyo_eqc, 1000000)
 
 # plot both lines on a 2D plot
@@ -55,12 +57,15 @@ plot(berlin2tokyo_r2_seg, add=TRUE)
 
 Looking at the 2D plot we clearly think that the straight line here is shorter.
 But now we can also visualize it on a sphere
-```{r sphere, echo=FALSE}
+```{r sphere}
 ps_globe(alpha=0.4)
 ps_lines(berlin2tokyo_s2_seg)
 ps_lines(berlin2tokyo_r2_seg)
 # capture the current rgl window in a variable and include it as widget in rmarkdown
 x <- scene3d()
+```
+
+```{r}
 rglwidget(x)
 ```
 Here we already get the impression that the line more south (the straight line in 2D) is not shorter than the great cricle line on the sphere which passes by closer to the poles.

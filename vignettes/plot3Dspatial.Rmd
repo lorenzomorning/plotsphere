@@ -1,5 +1,7 @@
 ---
 title: "Use rgl 3D plots for geospatial data"
+author: "Lorenz Beck"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{plot3Dspatial}
@@ -9,6 +11,7 @@ vignette: >
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
+  results = "asis",
   collapse = TRUE,
   comment = "#>"
 )

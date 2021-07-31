@@ -1,5 +1,7 @@
 ---
 title: "Basic management of 3D plot"
+author: "Lorenz Beck"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{plot3D}
@@ -9,6 +11,7 @@ vignette: >
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
+  results = "asis",
   collapse = TRUE,
   comment = "#>"
 )
@@ -64,18 +67,17 @@ Additionally there are some extensive functions:
 
 * `scene3d`: Saves the current plot into a variable
 * `rglwidget`: For embedding graphical displays in HTML documents 
+* `snapshot3d`: Saves a snapshot from the current rgl window
 
-## Our basic Earth
+## A first taste of geospatial
 
 Within adding graphical elements, general arguments can be used to control the material (https://dmurdoch.github.io/rgl/dev/articles/rgl.html#materials-1).
 Addtionally, advanced lightning can be set by the `light3d` function
 
-To model our basic Earth where all the geospatial data will be plotted on, we use a blue sphere. 
+To demonstrate those functions we plot a very primitive globe here! Note that our sphere here has the poles at the equators and edges along its surface. Therefore, using `ps_globe()` later on will create a nicer globe.
 
 ```{r lightning}
 # apply different lights on the current plot
 open3d()
 spheres3d(x=0, y=0, z=0, radius = 6378137, color = "royalblue3", specular = "royalblue3", shininess = 25, alpha = 0.7)
 ````
-
-Additionally, we want to add some latitudes and longitudes for orientation. Therefore, every 30 ° will be added to the sphere. 
