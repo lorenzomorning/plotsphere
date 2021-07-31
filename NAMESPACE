@@ -3,3 +3,4 @@
 export(ps_globe)
 export(ps_lines)
 export(ps_points)
+export(ps_polygons)
