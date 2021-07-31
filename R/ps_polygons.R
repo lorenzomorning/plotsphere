@@ -20,17 +20,14 @@ ps_polygons <- function(sf_polygons, color="black", alpha = 1, ...) {
   if(all(sf::st_geometry_type(sf_polygons)=='POLYGON' | sf::st_geometry_type(sf_polygons)=='MULTIPOLYGON') == FALSE) {
     stop("Input sf geometries are not all POLYGONs or MULTIPOLYGONs")
   }
-  if (all(sf::st_is_valid(sf_polygons)) == FALSE) {
-    sf_lines <- sf::st_make_valid(sf_polygons)
-  }
   # triangulation
-  triangulated <- sfdct::ct_triangulate(sf_polygons, a = 0.5)
-  # split back geometry collection to poylgons
+  triangulated <- sfdct::ct_triangulate(sf_polygons, a = 0.3)
+  # split back geometry collection to polygons
   triangulated <- sf::st_collection_extract(triangulated, "POLYGON")
   # transform to geocentric
   triangulated <- sf::st_transform(triangulated, "+proj=geocent")
   triangulated_coord <- sf::st_coordinates(triangulated)
-  # get rid of every fourth row as this is the point to close the polygon in sf
+  # get rid of every fourth row as this is the point to close the polygon in sf (but not needed to plot a triangle in rgl)
   triangulated_coord <- triangulated_coord[(1:nrow(triangulated_coord) %% 4) != 0, ]
   rgl::triangles3d(x=triangulated_coord[,'X'], y=triangulated_coord[,'Y'], z=triangulated_coord[,'Z'], color=color, alpha=alpha, diffuse = "black", specular = "black", shininess = 75, ...)
 }
