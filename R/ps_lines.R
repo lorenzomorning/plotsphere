@@ -17,17 +17,39 @@
 #'ps_globe()
 #'ps_lines(random_line, color = 'green')
 ps_lines <- function(sf_lines, color="black", alpha = 1, ...) {
-  if(all(sf::st_geometry_type(sf_lines)=='LINESTRING' | sf::st_geometry_type(sf_lines)=='MULTILINESTRING') == FALSE) {
+  if(all(sf::st_geometry_type(sf_lines)=='LINESTRING' | all(sf::st_geometry_type(sf_lines)=='MULTILINESTRING')) == FALSE) {
     stop("Input sf geometries are not all LINESTRINGs or MULTILINESTRINGs")
   }
   if (all(sf::st_is_valid(sf_lines)) == FALSE) {
     sf_lines <- sf::st_make_valid(sf_lines)
   }
   sf_lines <- sf::st_geometry(sf_lines)
-  sf_lines <- sf::st_make_valid(sf_lines)
   sf_lines <- sf::st_transform(sf_lines, "+proj=geocent")
-  for (single_line in sf_lines) {
-    single_line <- sf::st_coordinates(single_line)
-    rgl::arc3d(from = single_line[1:nrow(single_line)-1,1:3], to = single_line[2:nrow(single_line),1:3], center = c(0,0,0), color=color, alpha=alpha, ...)
+  # if line geometries are multilinestrings cast them to single linestrings
+  if (all(sf::st_geometry_type(sf_lines)=='MULTILINESTRING')) {
+    sf_lines <- sf::st_cast(sf_lines, to='LINESTRING')
   }
+  # if geometry is a single linestring no for loop is needed
+  if (length(sf_lines)==1) {
+    coord <- sf::st_coordinates(sf_lines[[1]])
+    from <- coord[1:nrow(coord)-1,1:3]
+    to <- coord[2:nrow(coord),1:3]
+  }
+  # iterate through the single linestring geometry and create a big from and to table
+  else if (length(sf_lines)>1) {
+    for (i in 1:length(sf_lines)) {
+      coord <- sf::st_coordinates(sf_lines[[i]])
+      # create starting from and to matrix from the first geometry
+      if(i == 1) {
+        from <- coord[1:nrow(coord)-1,1:3]
+        to <- coord[2:nrow(coord),1:3]
+      }
+      if (i > 1) {
+        # add coordinates to from (except the last one)
+        from <- rbind(from, coord[1:nrow(coord)-1,1:3])
+        to <- rbind(to, coord[2:nrow(coord),1:3])
+      }
+    }
+  }
+  rgl::arc3d(from = from, to = to, center = c(0,0,0), color=color, alpha=alpha, ...)
 }
