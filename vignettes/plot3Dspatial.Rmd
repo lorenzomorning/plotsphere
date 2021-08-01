@@ -35,34 +35,52 @@ The functionalities of the package `rgl` (desribed in the previous vignette) are
 
 To understand how we model the Earth in our 3D plot with `rgl` we take a look at the fitting geocentric coordinate system `"+proj=geocent"`
 
-```{r geocent}
-st_crs("+proj=geocent")
 ```
+GEOGCRS["unknown",
+    DATUM["WGS_1984",
+        SPHEROID["WGS 84",6378137,298.257223563],
+        AUTHORITY["EPSG","6326"]],
+    UNIT["metre",1,
+        AUTHORITY["EPSG","9001"]],
+    AXIS["Geocentric X",OTHER],
+    AXIS["Geocentric Y",OTHER],
+    AXIS["Geocentric Z",NORTH]]
+```
+
 In the description WKT of the geocentric projection we can see that it uses the `WGS84` ellipsoid with a radius of 6378137 m. Additionally the assumption is that this ellipsoid is centered at `POINT(0 0 0)` in the cartesian 3D space. Using this information the Earth is modelled in a sphere as the following: 
 
 ```{r sphere}
-# open device for 3D plotting
+# plot our spherical globe
 open3d()
-ps_globe()
+ps_globe(alpha=0.4)
+axes3d(box=FALSE)
+axis3d('x', pos = c(NA, 0, 0), labels = FALSE)
+axis3d('y', pos = c(0, NA, 0), labels = FALSE)
+axis3d('z', pos = c(0, 0, NA), labels = FALSE)
+title3d(main="Geocentric Coordinate Systems", xlab = 'X axis', ylab = 'Y axis', zlab = 'Z axis')
 ```
 
-## 2. Coordinates as point in 3D plots
+## 2. Coordinates as points on 3D plots
 
-Therefore ellipsoidal coordinates have to be projected to the cartesian geocentric coordinate system 
+Therefore ellipsoidal or preojected coordinates must be projected to the cartesian geocentric coordinate system 
 
 ````{r wgs84}
 # create an ellipsoidal point with lon 60° North and lat 47° East in WGS84
-(point_ne <- st_as_sfc("POINT(60 47)", crs = 4326)) 
+point_ne <- st_as_sfc("POINT(60 47)", crs = 4326)
+st_as_text(point_ne, pretty=TRUE)
 # create a second ellipsoidal point with lon -130° and lat -50° in WGS84
-(point_sw <- st_as_sfc("POINT(-130 -50)", crs = 4326))
+point_sw <- st_as_sfc("POINT(-130 -50)", crs = 4326)
+st_as_text(point_sw, pretty=TRUE)
 ```
 
 As the Earth radius is implied in `WGS84` geographical projections the original points only need two angles to be referenced `(lon lat)`.
 
 ```{r geocentric}
 # project both points to geocentric coordinate system
-(point_ne_geoc <- st_transform(point_ne, "+proj=geocent"))
-(point_sw_geoc <- st_transform(point_sw, "+proj=geocent"))
+point_ne_geoc <- st_transform(point_ne, "+proj=geocent")
+st_as_text(point_ne_geoc, pretty=TRUE)
+point_sw_geoc <- st_transform(point_sw, "+proj=geocent")
+st_as_text(point_sw_geoc, pretty=TRUE)
 ```
 
 After projecting it into `+proj=geocent` the point now have three dimensions for its reference `(x y z)`. 
@@ -70,13 +88,58 @@ For more information about the conversions check the chapter "2.2 Ellipsoidal Co
 https://keen-swartz-3146c4.netlify.app/cs.html#ellipsoidal-coordinates 
 
 ```{r spherical point}
-# add the points to the 3D plot
+close3d()
 open3d()
+# add the points to the 3D plot (with axis)
 ps_globe()
 # add point_ne_geoc
 points3d(x = st_coordinates(point_ne_geoc)[1,'X'], y = st_coordinates(point_ne_geoc)[1,'Y'], z = st_coordinates(point_ne_geoc)[1,'Z'])
 # add point_sw_geoc
 points3d(x = st_coordinates(point_sw_geoc)[1,'X'], y = st_coordinates(point_sw_geoc)[1,'Y'], z = st_coordinates(point_sw_geoc)[1,'Z'])
 ```
+This is the underlying magic behind all conversions from ellipsoidal or projected CRS to geocentric coordinates. This basic procedure is done in all function of geometric conversion and plottings, as points are the the spatial primitives of all spatial geometries (including lines, polygons).
+On the following we show the function examples and some additional hints.
 
-This is the underlying magic behind all conversions form ellipsoidal to geocentric coordinates. This basic procedure is done in all function of geometric conversion and plottings, as points are the the spatial primitives of all spatial geometries (including lines, polygons)
+## 3. POINTS
+
+```{r points}
+close3d()
+open3d()
+# create random ellipsoidal coordinates (lon lat)
+random_matrix <- matrix(c(runif(30, -90, 90), runif(30, -180, 180)), nrow=10, ncol=2)
+# convert the matrix of random points into a simple feature multipoint
+random_points <- st_multipoint(random_matrix)
+random_points <- st_sfc(random_points, crs = 4326)
+# plot the sf multipoint on the sphere
+ps_globe()
+ps_points(random_points, color='red', alpha=0.8)
+```
+
+## 4. LINES
+
+```{r lines}
+close3d()
+open3d()
+# create random ellipsoidal coordinates (lon lat)
+random_matrix <- matrix(c(runif(30, -90, 90), runif(30, -180, 180)), nrow=10, ncol=2)
+# convert the matrix of random points into a simple feature linestring
+random_line <- sf::st_linestring(random_matrix)
+random_line <- sf::st_sfc(random_line, crs = 4326)
+# plot the sf linestring on the sphere
+ps_globe()
+ps_lines(random_line, color = 'green')
+```
+
+## 5. POLYGONS
+
+```{r polygon}
+close3d()
+open3d()
+# create ellipsoidal coordinates (lon lat) (random points wouldn't work here as the geometry would be probably invalid due to crossings in itself)
+poly <- st_polygon(list(rbind(c(0,23), c(3,21), c(15,32), c(26,12), c(25,-33), c(42,-40), c(32,-54), c(10,-23), c(0,-23), c(0,23))))
+# convert the matrix of random points into a simple feature polygon
+poly <- st_sfc(poly, crs = 4326)
+# plot the sf polygon on the sphere
+ps_globe(alpha=0.4)
+ps_polygons(poly, color = 'darkgreen')
+```
