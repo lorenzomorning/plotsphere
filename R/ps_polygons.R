@@ -11,14 +11,18 @@
 #'
 #' @export
 #'
-#' @examples random_poly <- sf::st_polygon(list(rbind(c(0,23), c(3,21), c(15,32), c(26,12),
+#' @examples poly <- sf::st_polygon(list(rbind(c(0,23), c(3,21), c(15,32), c(26,12),
 #' c(25,-33), c(42,-40), c(32,-54), c(10,-23), c(0,-23), c(0,23))))
-#'random_poly <- sf::st_sfc(random_poly, crs = 4326)
+#'poly <- sf::st_sfc(poly, crs = 4326)
 #'ps_globe(alpha=0.4)
-#'ps_polygons(random_poly, color = 'darkgreen')
+#'ps_polygons(poly, color = 'darkgreen')
 ps_polygons <- function(sf_polygons, color="black", alpha = 1, ...) {
-  if(all(sf::st_geometry_type(sf_polygons)=='POLYGON' | sf::st_geometry_type(sf_polygons)=='MULTIPOLYGON') == FALSE) {
+  if(all(sf::st_geometry_type(sf_polygons)=='POLYGON' | all(sf::st_geometry_type(sf_polygons)=='MULTIPOLYGON')) == FALSE) {
     stop("Input sf geometries are not all POLYGONs or MULTIPOLYGONs")
+  }
+  # if polygon geometries are multipolygons cast them to single polygons
+  if (all(sf::st_geometry_type(sf_polygons)=='MULTIPOLYGON')) {
+    sf_polygons <- sf::st_cast(sf_polygons, to='POLYGON')
   }
   # triangulation
   triangulated <- sfdct::ct_triangulate(sf_polygons, a = 0.3)
