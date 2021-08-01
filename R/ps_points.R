@@ -20,9 +20,6 @@ ps_points <- function(sf_points, color="black", alpha=1, ...) {
   if(all(sf::st_geometry_type(sf_points)=='POINT' | sf::st_geometry_type(sf_points)=='MULTIPOINT') == FALSE) {
     stop("Input sf geometries are not all POINTs or MULTIPOINTs")
   }
-  if (all(sf::st_is_valid(sf_points)) == FALSE) {
-    sf_points <- sf::st_make_valid(sf_points)
-  }
   sf_points <- sf::st_geometry(sf_points)
   sf_points <- sf::st_transform(sf_points, "+proj=geocent")
   sf_points <- sf::st_coordinates(sf_points)
