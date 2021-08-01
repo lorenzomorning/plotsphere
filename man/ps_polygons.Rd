@@ -21,9 +21,9 @@ ps_polygons(sf_polygons, color = "black", alpha = 1, ...)
 Plot simple feature polygons on a sphere. Use ps_globe() first to plot the polygons on the globe
 }
 \examples{
-random_poly <- sf::st_polygon(list(rbind(c(0,23), c(3,21), c(15,32), c(26,12),
+poly <- sf::st_polygon(list(rbind(c(0,23), c(3,21), c(15,32), c(26,12),
 c(25,-33), c(42,-40), c(32,-54), c(10,-23), c(0,-23), c(0,23))))
-random_poly <- sf::st_sfc(random_poly, crs = 4326)
+poly <- sf::st_sfc(poly, crs = 4326)
 ps_globe(alpha=0.4)
-ps_polygons(random_poly, color = 'darkgreen')
+ps_polygons(poly, color = 'darkgreen')
 }
