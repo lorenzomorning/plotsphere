@@ -61,20 +61,14 @@ But now we can also visualize it on a sphere
 ps_globe(alpha=0.4)
 ps_lines(berlin2tokyo_s2_seg)
 ps_lines(berlin2tokyo_r2_seg)
-# capture the current rgl window in a variable and include it as widget in rmarkdown
-x <- scene3d()
 ```
 
-```{r}
-rglwidget(x)
-```
 Here we already get the impression that the line more south (the straight line in 2D) is not shorter than the great cricle line on the sphere which passes by closer to the poles.
 
 This gets even more evident looking at the length of both lines
 ```{r length}
 sf_use_s2(TRUE)
 st_length(berlin2tokyo_s2_seg)
-          
 sf_use_s2(FALSE)
 st_length(berlin2tokyo_r2_seg)
 ```
