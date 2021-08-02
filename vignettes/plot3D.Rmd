@@ -4,9 +4,10 @@ author: "Lorenz Beck"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{plot3D}
+  %\VignetteIndexEntry{Plot 3D}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  \usepackage[utf8]{inputenc}
 ---
 
 ```{r, include = FALSE}
@@ -25,11 +26,22 @@ setupKnitr(autoprint = TRUE)
 
 The package `rgl` is a 3D visualization system based on OpenGL. It provides a medium to high level interface for use in R, currently modelled on classic R graphics, with extensions to allow for interaction.
 
-This section is a short introduction on useful information about `rgl` regarding this package `plotsphere`. For more detailed description of `rgl` see the github vignettes bymain developer Duncan Murdoch: https://dmurdoch.github.io/rgl/dev/
+This section is a short introduction on useful information about `rgl` regarding this package `plotsphere`. For more detailed description of `rgl` see the [documentation](https://dmurdoch.github.io/rgl/dev/) by main developer Duncan Murdoch.
 
 While plot 3D is mainly used in this packages to produce 3D scatterplots we will rather plot graphical elements as spheres, points, arcs and triangles using `xzy.coords` into the 3D space.
 
-## Graphical Elements
+## 1 Management of 3D plots
+
+To deal with one or several 3D plots, these functions are the basic operators for their management:
+
+* `open3d` to open a new 3D plot window (prints id number). Use this function to open the first plot or new empty plots
+* `close3d` to close current 3D plot window
+* `mfrow3d` enables plotting of several devices next to eachother `mfrow3d(row,col)`
+* `next3d` jumps to the next plotting device when mfrow3d() is activated
+
+More functions can be found in this [rgl documentation chapter](https://dmurdoch.github.io/rgl/dev/articles/rgl.html#working-with-the-scene-1)
+
+## 2 Graphical Elements
 
 There are many and specific graphical elements available in the `rgl` package. However, we will limit those to most necessary we need
 
@@ -40,44 +52,66 @@ Function        | Description         | Type of element  | Geospatial geometry
 `spheres3d`:    | adds spheres        | constructed      | The Earth
 `arcs3d`:       | adds spherical arcs | constructed      | line
 
-## Operators on the 3D plots
 
-As we only deal with one active 3D plot, these functions are the basic operators to manage it:
+### Plotting our first element
 
-* `open3d` to open a new 3D plot window (prints id number)
-* `cur3d` get id of currently opened 3D plot (prints id number)
-* `close3d` to close current 3D plot window
-* `set3d` set another 3D plot window as the current one 
-* `ids3d` get the objects on the current 3D plot window
+Our first element will be a small sphere that is characterised by its center point and radius. 
 
 ```{r sphere}
-# open device for 3D plotting
 open3d()
-spheres3d(x=0, y=0, z=0, radius = 6378137, color = "white")
+# add sphere with center point and radius
+spheres3d(x=0, y=0, z=0, radius = 50)
 ```
 
-```{r basic2}
-cur3d() # prints index of currently open 3D plots
-open3d() # closes previous one and opens a new 3D plot (print index of opened plot)
-cur3d() # prints index of currently open 3D plots
-close3d() # closes the current 3D plot
-```
+### A first taste of geospatial
 
-Additionally there are some extensive functions:
+Within adding graphical elements, general arguments can be used to control the material. The most important ones as color, alpha and more can be found in this [rgl documentation chapter](https://dmurdoch.github.io/rgl/dev/articles/rgl.html#materials-1).
+Additionally, advanced lightning of the whole plot could be set by the `light3d` function.
 
-* `scene3d`: Saves the current plot into a variable
-* `rglwidget`: For embedding graphical displays in HTML documents 
-* `snapshot3d`: Saves a snapshot from the current rgl window
-
-## A first taste of geospatial
-
-Within adding graphical elements, general arguments can be used to control the material (https://dmurdoch.github.io/rgl/dev/articles/rgl.html#materials-1).
-Addtionally, advanced lightning can be set by the `light3d` function
-
-To demonstrate those functions we plot a very primitive globe here! Note that our sphere here has the poles at the equators and edges along its surface. Therefore, using `ps_globe()` later on will create a nicer globe.
+To demonstrate this functionality we plot a very primitive globe here! Note that our sphere here has the poles at the equators and edges along its surface. Therefore, use `ps_globe()` later on to create a nicer globe.
 
 ```{r lightning}
-# apply different lights on the current plot
-open3d()
-spheres3d(x=0, y=0, z=0, radius = 6378137, color = "royalblue3", specular = "royalblue3", shininess = 25, alpha = 0.7)
-````
+# add a first geospatial globe with some lightning settings
+spheres3d(x=0, y=0, z=0, radius = 6350000, color = "royalblue3", specular = "royalblue3", shininess = 25, alpha = 0.7)
+```
+
+Why are we using a `radius = 6350000`? That is not the radius of the Earth Spheroid right?
+
+True, the radius that WGS84 uses would have been `6378137 m`. But to ensure that the graphical elements we will plot on the globe later on are visible, we use a smaller globe.
+NOTE that the graphical elements are all plotted on a sphere with the WGS84 radius of `6378137 m`, only the underlying globe is a bit smaller for visualization reasons.
+
+### Stack graphical elements
+
+If one 3D-plot is active, all following graphical elements will be added to it directly. 
+
+```{r arc}
+# open first device for 3D plotting by calling graphical element directly
+spheres3d(x=0, y=0, z=0, radius = 6350000, color = "royalblue3", specular = "royalblue3", shininess = 25, alpha = 0.7)
+# create geocentric coordinate for greenwich
+g_coord <- matrix(data=c(11169.39, 3.918492e-10, 0, 0, 6356743, -6356752), nrow=2, ncol=3)
+# add an arc to the sphere
+arc3d(from=g_coord[1,], to=g_coord[2,], center = c(0,0,0), color = "black")
+```
+
+However if you do not want add graphical elements to the current globe make sure you open another empty one with open3d(). Closing the previous plot is optional but keeps your windows tidy.
+
+### Multi-figure layout
+
+Additionally you could also plot those two plots next to eachother using multi-figure layout functions of `mfrow3d` and `next3d`.
+You can find more advanced settings for multi-layout figures in this [rgl documentation chapter](https://dmurdoch.github.io/rgl/dev/articles/rgl.html#multi-figure-layouts-1)
+
+```{r multi}
+# set the multi-figure layout
+mfrow3d(nr=1, nc=2, sharedMouse = TRUE)
+
+# open first device for 3D plotting by calling graphical element directly
+spheres3d(x=0, y=0, z=0, radius = 6350000, color = "royalblue3", specular = "royalblue3", shininess = 25, alpha = 0.7)
+# create geocentric coordinate for greenwich
+g_coord <- matrix(data=c(11169.39, 3.918492e-10, 0, 0, 6356743, -6356752), nrow=2, ncol=3)
+# add an arc to the sphere
+arc3d(from=g_coord[1,], to=g_coord[2,], center = c(0,0,0), color = "black")
+
+# new empty globe plot at the right next to the previous one
+next3d()
+spheres3d(x=0, y=0, z=0, radius = 6350000, color = "royalblue3", specular = "royalblue3", shininess = 25, alpha = 0.7)
+```
