@@ -20,6 +20,7 @@ ps_polygons <- function(sf_polygons, color="black", alpha = 1, ...) {
   if(all(sf::st_geometry_type(sf_polygons)=='POLYGON' | all(sf::st_geometry_type(sf_polygons)=='MULTIPOLYGON')) == FALSE) {
     stop("Input sf geometries are not all POLYGONs or MULTIPOLYGONs")
   }
+  sf_polygons <- sf::st_geometry(sf_polygons)
   # if polygon geometries are multipolygons cast them to single polygons
   if (all(sf::st_geometry_type(sf_polygons)=='MULTIPOLYGON')) {
     sf_polygons <- sf::st_cast(sf_polygons, to='POLYGON')
