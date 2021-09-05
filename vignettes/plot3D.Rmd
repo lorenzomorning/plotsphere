@@ -14,8 +14,7 @@ vignette: >
 knitr::opts_chunk$set(
   results = "asis",
   collapse = TRUE,
-  comment = "#>"
-)
+  comment = "#>")
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
@@ -31,7 +30,7 @@ This section is a short introduction on useful information about `rgl` regarding
 
 While plot 3D is mainly used in this packages to produce 3D scatterplots we will rather plot graphical elements as spheres, points, arcs and triangles using `xzy.coords` into the 3D space.
 
-## 1 Management of 3D plots
+## 1. Management of 3D plots
 
 To deal with one or several 3D plots, these functions are the basic operators for their management:
 
@@ -42,7 +41,7 @@ To deal with one or several 3D plots, these functions are the basic operators fo
 
 More functions can be found in this [rgl documentation chapter](https://dmurdoch.github.io/rgl/dev/articles/rgl.html#working-with-the-scene-1)
 
-## 2 Graphical Elements
+## 2. Graphical Elements
 
 There are many and specific graphical elements available in the `rgl` package. However, we will limit those to most necessary we need
 
@@ -96,7 +95,7 @@ arc3d(from=g_coord[1,], to=g_coord[2,], center = c(0,0,0), color = "black")
 
 However if you do not want add graphical elements to the current globe make sure you open another empty one with open3d(). Closing the previous plot is optional but keeps your windows tidy.
 
-### Multi-figure layout
+## 3. Multi-figure layout
 
 Additionally you could also plot those two plots next to eachother using multi-figure layout functions of `mfrow3d` and `next3d`.
 You can find more advanced settings for multi-layout figures in this [rgl documentation chapter](https://dmurdoch.github.io/rgl/dev/articles/rgl.html#multi-figure-layouts-1)
