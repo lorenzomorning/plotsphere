@@ -18,13 +18,11 @@ plot.geolinecompare <- function(x,...) {
 #'
 plot.geoairline <- function(x,...) {
   ps_globe(alpha=0.8)
-  ps_lines(x$airline, color='darkblue')
   ps_points(x$cities, color = 'darkblue')
+  ps_lines(x$airline, color='darkblue')
   cities <- as.data.frame(x$cities)
   cities_geoc <- sf::st_transform(x$cities, "+proj=geocent")
   cities_geoc_coord <- sf::st_coordinates(cities_geoc)
   geo_length <- min(as.numeric(sf::st_length(x$airline)))
-  for (i in 1:nrow(x$cities)) {
-    rgl::text3d(x=cities_geoc_coord[i,1]+geo_length/10, y=cities_geoc_coord[i,2]+geo_length/10, z=cities_geoc_coord[i,3]+geo_length/10, cities[i,1])
-  }
+  rgl::text3d(x=cities_geoc_coord[,1]+geo_length/10, y=cities_geoc_coord[,2]+geo_length/10, z=cities_geoc_coord[,3]+geo_length/10, cities[,1])
 }
