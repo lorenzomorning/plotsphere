@@ -22,6 +22,7 @@ options(rmarkdown.html_vignette.check_title = FALSE)
 ```{r setup, echo=FALSE, include=FALSE, results="asis"}
 library(rgl)
 setupKnitr(autoprint = TRUE)
+knitr::opts_chunk$set(results = 'markdown')
 ```
 
 The package `rgl` is a 3D visualization system based on OpenGL. It provides a medium to high level interface for use in R, currently modelled on classic R graphics, with extensions to allow for interaction.

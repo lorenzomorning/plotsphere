@@ -24,6 +24,7 @@ library(rgl)
 library(sf)
 library(plotsphere)
 setupKnitr(autoprint = TRUE)
+knitr::opts_chunk$set(results = 'markdown')
 ```
 
 The functionalities of the package `rgl` (desribed in the previous vignette) are exploited to plot geospatial data sets that have ellipsoidal coordinates on an interactive sphere. As the package `sf` switches switches from the 1.0 version on to default calculations on a sphere, visualizations should be also plotted rather on a sphere than on a flat projection. 
