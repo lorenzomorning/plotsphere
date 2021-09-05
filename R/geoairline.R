@@ -1,5 +1,7 @@
 #' geoairline
 #'
+#' @description This function creates the shortest great circle line connection over a sphere between two cities
+#'
 #' @param city1 english name of the first city
 #' @param country1 english name of the country of the first city
 #' @param city2 english name of the second city
