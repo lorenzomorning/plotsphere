@@ -19,7 +19,7 @@ geoairline(city1, country1, city2, country2)
 object of class geoairline - list of two elements: cities_sf and LINESTRING geometry between the cities
 }
 \description{
-geoairline
+This function creates the shortest great circle line connection over a sphere between two cities
 }
 \examples{
 berlin2tokyo <- geoairline("Berlin", "Germany", "Tokyo", "Japan")
