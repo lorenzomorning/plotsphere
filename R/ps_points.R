@@ -1,6 +1,6 @@
 #' Plot simple feature points on a sphere
 #'
-#' Plot simple feature points on a sphere. Use ps_globe() first to plot the points on the globe
+#' @description Plot simple feature points on a sphere. Use ps_globe() first to plot the points on the globe
 #'
 #' @param sf_points simple feature point or multi-points
 #' @param color set color of the point(s)

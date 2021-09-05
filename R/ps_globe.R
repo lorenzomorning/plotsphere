@@ -1,6 +1,6 @@
 #' Create the globe
 #'
-#' Plots the basic globe in a rgl window device
+#' @description Plots the basic globe in a rgl window device
 #'
 #' @param show_poles logical if the poles should be added for orientation
 #' @param alpha set transparency for the globe

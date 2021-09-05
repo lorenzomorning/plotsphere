@@ -1,6 +1,6 @@
 #' Plot simple feature lines on a sphere
 #'
-#' Plot simple feature lines on a sphere. Use ps_globe() first to plot the lines on the globe
+#' @description Plot simple feature lines on a sphere. Use ps_globe() first to plot the lines on the globe
 #'
 #' @param sf_lines simple feature linestrings or mutli-linestrings
 #' @param color set color of the point(s)

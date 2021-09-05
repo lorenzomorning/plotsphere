@@ -1,6 +1,6 @@
 #' Plot simple feature polygons on a sphere
 #'
-#' Plot simple feature polygons on a sphere. Use ps_globe() first to plot the polygons on the globe
+#' @description Plot simple feature polygons on a sphere. Use ps_globe() first to plot the polygons on the globe
 #'
 #' @param sf_polygons simple feature polygons or mutli-polygons
 #' @param color set color of the point(s)
