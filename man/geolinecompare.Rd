@@ -13,7 +13,7 @@ geolinecompare(sfline_wgs84)
 object of class geolinecompare
 }
 \description{
-This function takes a LINESTRING simple feature in WGS84 and creates its copy in an equirectangular projection as if the ellipsoidal coordinates are treated as metrics and not as spherical. It returns a list as s3 class geoline_compare
+This function takes a LINESTRING simple feature in WGS84 and creates its copy in an equirectangular projection as if the ellipsoidal coordinates are treated as metrics and not as spherical. It returns a list as s3 class geolinecompare
 }
 \examples{
 random_matrix <- matrix(c(runif(30, -90, 90), runif(30, -180, 180)), nrow=10, ncol=2)
