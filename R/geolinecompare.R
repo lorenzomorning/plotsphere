@@ -1,6 +1,6 @@
 #' geolinecompare
 #'
-#' @description This function takes a LINESTRING simple feature in WGS84 and creates its copy in an equirectangular projection as if the ellipsoidal coordinates are treated as metrics and not as spherical. It returns a list as s3 class geoline_compare
+#' @description This function takes a LINESTRING simple feature in WGS84 and creates its copy in an equirectangular projection as if the ellipsoidal coordinates are treated as metrics and not as spherical. It returns a list as s3 class geolinecompare
 #'
 #' @param sfline_wgs84 a LINESTRING simple feature in WGS84
 #'
