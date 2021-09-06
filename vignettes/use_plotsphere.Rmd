@@ -27,12 +27,12 @@ setupKnitr(autoprint = TRUE)
 knitr::opts_chunk$set(results = 'markdown')
 ```
 
-The main use of plotsphere so far is the comparison between spatial geometries that are spherical and spatial geometries that emerge from two-dimensional reference systems. 
+The main use of `plotsphere` so far is the comparison between spatial geometries that are spherical and spatial geometries that emerge from two-dimensional reference systems. 
 The simple feature package `sf` is now capable of performing spatial operations of geographical/ellipsoidal coordinates (lon lat on WGS 84 for example) on a sphere, rather than most GISystems that handle geographical/ellipsoidal coordinates on a flat 2D space. The differences are huge and can be visualized very easy now using this package `plotsphere`
 
 ## Berlin 2 Tokyo
 
-To demonstrate simple but huge differences in spatial lines, we define a line going from Berlin to Tokyo. Therefore we can use the function geoairline wich creates an object of the class geoairline. 
+To demonstrate simple but huge differences in spatial lines, we define a line going from Berlin to Tokyo. Therefore we can use the function `geoairline()` wich creates an object of the class `geoairline`. 
 
 ```{r line}
 # Line between Berlin and Tokyo
@@ -40,7 +40,7 @@ berlin2tokyo <- geoairline("Berlin", "Germany", "Tokyo", "Japan")
 print(berlin2tokyo)
 ```
 
-Connecting the two Cities we the sf package creates by default a shortest great circle segment on the sphere. We can display the length by summary of the geoairline class object and plot it on a sphere by default
+Connecting the two cities using the `sf` package creates by default a shortest great circle segment on the sphere. We can display the length by summary of the `geoairline` class object and plot it on a sphere by default
 ```{r geoairline}
 # Summary geoairline object berlin2tokyo
 summary(berlin2tokyo)
@@ -49,7 +49,7 @@ summary(berlin2tokyo)
 plot(berlin2tokyo)
 ```
 
-To show where this line could go geographically using another projection we will segmentize it with ellipsoidal coordinates in WGS84 and on a equirectangular projection (eqc). The eqc projection simulates takes ellipsoidal coordinates as metrics on a x and y axis, and is also commonly known as the plot carè. This is done by the funcion geolinecompare() which creates a geolinecompare object.
+To show where this line could go geographically using another projection we will segmentize it with ellipsoidal coordinates in WGS84 and on a equirectangular projection (eqc). The eqc projection simulates takes ellipsoidal coordinates as metrics on a x and y axis, and is also commonly known as the plot carè. This is done by the funcion `geolinecompare()` which creates a `geolinecompare` object.
 
 ```{r segmentize}
 berlin2tokyo_comp <- geolinecompare(berlin2tokyo$airline)
@@ -71,7 +71,7 @@ text(x=c(2000000, 15000000), y=c(5500000, 3500000), labels=c('Berlin', 'Tokyo'))
 ```
 
 Looking at the 2D plot we clearly think that the straight line here is shorter.
-But now we can also visualize it on a sphere, using the inherited plot method for an object of the class geolinecompare
+But now we can also visualize it on a sphere, using the inherited `plot()` method for an object of the class `geolinecompare`
 ```{r sphere}
 plot(berlin2tokyo_comp)
 berlin_coord <- subset(berlin2tokyo$cities, name=="Berlin") %>% st_transform("+proj=geocent") %>% st_coordinates()
@@ -82,12 +82,12 @@ text3d(x=tokyo_coord[1,1]+1000000, y=tokyo_coord[1,2]+1000000, z=tokyo_coord[1,3
 
 Here, we already get the impression that the line more south (the straight line in 2D) is not shorter than the great circle line on the sphere which passes by closer to the north pole.
 
-This gets even more evident looking at the length of both lines. Therefore, we can use the inherited method summary for an object of the class geolinecompare
+This gets even more evident looking at the length of both lines. Therefore, we can use the inherited method `summary()` for an object of the class `geolinecompare`
 ```{r length}
 summary(berlin2tokyo_comp)
 ```
 
-To directly get the length difference we can use the function geoline_diff() for objects of the class geolinecompare
+To directly get the length difference we can use the function `geoline_diff()` for objects of the class `geolinecompare`
 ```{r length diff}
 geolinecompare_diff(berlin2tokyo_comp)
 ```
@@ -105,3 +105,6 @@ summary(b2t2r)
 # Plot the geoairline
 plot(b2t2r)
 ```
+But keep in my mind that the geoline comparison is so far only available for single LINESTRIMG geometries!
+
+Have fun with mapping!
