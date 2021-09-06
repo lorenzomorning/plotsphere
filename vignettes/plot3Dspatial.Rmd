@@ -112,6 +112,17 @@ ps_globe()
 ps_points(random_points, color='red', alpha=0.8)
 ```
 
+For more point data we can use the dataset stored in this package called `world.cities`. After transforming it into a simple feature we can simply plot it.
+```{r world cities}
+# load data
+data("world.cities")
+# transform data.frame to sf object
+wc <- st_as_sf(world.cities, coords = c("long", "lat"), crs=4326)
+# plot world cities
+close3d()
+ps_globe(show_poles = FALSE, alpha=0.2)
+ps_points(wc)
+```
 ## 4. LINES
 
 ```{r lines}
